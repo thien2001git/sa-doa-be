@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const index_1 = __importDefault(require("./routes/index"));
+const users_1 = __importDefault(require("./routes/users"));
 const http_errors_1 = __importDefault(require("http-errors"));
 // const createError = require('http-errors')
 const path = require('path');
@@ -20,7 +21,7 @@ app.use(express_1.default.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express_1.default.static(path.join(__dirname, 'public')));
 app.use('/', index_1.default);
-// app.use('/users', usersRouter);
+app.use('/users', users_1.default);
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
     next(http_errors_1.default);

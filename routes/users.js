@@ -4,9 +4,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const UserCollection_1 = __importDefault(require("../data/mongodb/collections/UserCollection"));
 const router = express_1.default.Router();
 /* GET users listing. */
 router.get('/', (req, res, next) => {
-    res.send('respond with a resource');
+    UserCollection_1.default.findAll().then((_res) => {
+        res.send(_res);
+    }).catch(e => {
+        console.log(e);
+        res.send([]);
+    });
 });
-module.exports = router;
+router.post('/upsert', (req, res, next) => {
+    UserCollection_1.default.upsert({ _id: req.body._id, id: req.body.id }, req.body).then(r => {
+        res.send(true);
+    }).catch(e => {
+        console.log(e);
+        res.send(false);
+    });
+});
+router.post('/delete', (req, res, next) => {
+    UserCollection_1.default.delete(req.body).then(r => {
+        res.send(true);
+    }).catch(e => {
+        console.log(e);
+        res.send(false);
+    });
+});
+exports.default = router;
