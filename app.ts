@@ -1,5 +1,6 @@
 import express, {Express, Response, Request, NextFunction} from "express";
 import router from './routes/index'
+import usersRouter from './routes/users'
 import createError from 'http-errors'
 
 // const createError = require('http-errors')
@@ -21,7 +22,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', router);
-// app.use('/users', usersRouter);
+app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use((req: Request, res: Response, next: NextFunction) => {
