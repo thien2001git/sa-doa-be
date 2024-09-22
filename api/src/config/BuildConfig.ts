@@ -3,6 +3,4 @@ const CONNECTION_STRING = "mongodb+srv://hoangthien66771508:1B1oxqEpXUW8D46c@clu
 const BuildConfig = {
     CONNECTION_STRING
 }
-
-module.exports = BuildConfig
 export default BuildConfig

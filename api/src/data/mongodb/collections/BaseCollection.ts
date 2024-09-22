@@ -3,9 +3,10 @@ import client from "../../utils/ConnectionUtils";
 
 export class BaseCollection<T> {
     protected collectionName: string
-    private dbName = "money"
+    private dbName = "sa-doa"
 
     constructor(collectionName: string) {
+        console.log("client connect")
         this.collectionName = collectionName
         client.connect().then((res: MongoClient) => {
             console.log("client connect ok")
@@ -27,7 +28,6 @@ export class BaseCollection<T> {
 
     async findOne(filter: T) {
         const result = await client.db(this.dbName).collection(this.collectionName).findOne(filter);
-
         if (result) {
             console.log(`Found a listing in the collection with the name '${filter}':`);
             console.log(result);
