@@ -1,10 +1,9 @@
 import {MongoClient, WithId} from "mongodb";
-
-const client = require("../utils/Connection")
+import client from "../../utils/ConnectionUtils";
 
 export class BaseCollection<T> {
     protected collectionName: string
-    private dbName = "sa-doa"
+    private dbName = "money"
 
     constructor(collectionName: string) {
         this.collectionName = collectionName

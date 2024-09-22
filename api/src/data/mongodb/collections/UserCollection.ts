@@ -1,5 +1,5 @@
 import {BaseCollection} from "./BaseCollection";
-import {User} from "../entity/User";
+import {User} from "../../model/User";
 
 class UserCollection extends BaseCollection<User>{}
 
