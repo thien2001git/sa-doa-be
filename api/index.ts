@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.get("/", (req, res) => res.send(BuildConfig.CONNECTION_STRING));
+app.get("/", (req, res) => res.send("okok"));
 app.use("/user", userRouter)
 app.listen(6000, () => console.log("Server ready on port 3000."));
 
