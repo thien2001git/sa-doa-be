@@ -1,11 +1,23 @@
 import BuildConfig from "./src/config/BuildConfig";
 import userRouter from "./src/presentation/router/UserRouter";
+
 const express = require("express");
 const app = express();
 const path = require('path')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
+const cors = require('cors');
 
+app.use(
+    cors(
+        {
+            origin: ['my front end http'],
+            methods: ['GET', 'POST', 'PUT', 'DELETE'],
+            allowedHeaders: ['Content-Type', 'Authorization'],
+            credentials: true
+        }
+    )
+)
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
