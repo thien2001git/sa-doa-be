@@ -8,7 +8,7 @@ const useRouter = (app: express.Express) => {
     router.post('/create', UserController.create);
     router.put('/update', UserController.update);
     router.delete('/delete', UserController.delete);
-    app.use('/user', router); // domain/user
+    app.use('/users', router); // domain/user
 };
 
 export default useRouter;

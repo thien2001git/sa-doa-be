@@ -1,6 +1,6 @@
 import express from 'express';
 import { responseErrors, responseSuccess } from '../helpers';
-import useRouter from './user';
+import useRouter from './users';
 const router = (app: express.Express) => {
     app.get('/', (_, res) => responseSuccess(res, 'success', 200));
     useRouter(app);
