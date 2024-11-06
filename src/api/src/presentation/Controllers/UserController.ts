@@ -2,6 +2,7 @@ import express from 'express';
 import { responseErrors, responseSuccess } from '../../../../helpers';
 import userCollection from '../../data/mongodb/collections/UserCollection';
 import BaseController from './base.controller';
+import { hashHmacString } from '../../../../helpers/crypto';
 
 class UserController extends BaseController {
     async index(req: express.Request, res: express.Response) {
@@ -15,7 +16,12 @@ class UserController extends BaseController {
     async create(req: express.Request, res: express.Response) {
         console.log(req.body);
         try {
-            const userCreated = await userCollection.store(req.body);
+            const {body} =req
+            const newPass = hashHmacString(body.password)
+            const userCreated = await userCollection.store({
+                ...body,
+                password:newPass
+            });
             return responseSuccess(res, userCreated);
         } catch (error: any) {
             return responseErrors(res, 400, error.message);

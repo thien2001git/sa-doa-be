@@ -20,14 +20,17 @@ connect(process.env.ATLAS_URI, process.env.DB_NAME)
     .catch((err) => {
         console.log(err);
     });
+
 const app = express();
 app.use(cors({}));
 app.use(logger('dev'));
-
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Không dùng file tĩnh nên bỏ
+// app.use(express.static(path.join(__dirname, 'public')));
+
 router(app);
+
 app.listen(PORT, () => console.log(`Server ready on port ${PORT}`));
