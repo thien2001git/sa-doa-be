@@ -83,7 +83,7 @@ class BaseCollection {
         ]);
 
         return {
-            data,
+            docs: data,
             total,
             limit,
             page,

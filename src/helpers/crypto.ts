@@ -1,20 +1,18 @@
 import crypto from 'node:crypto';
 
 // Ngày hiện tại + số ngày => unixtime
-const addDaysToUnixTime =(days: number): number=> {
+const addDaysToUnixTime = (days: number): number => {
     const currentUnixTime = Math.floor(Date.now() / 1000);
     const daysInSeconds = days * 24 * 60 * 60;
     return currentUnixTime + daysInSeconds;
-}
+};
 
 // Mã hoá
 export const hashHmacString = (string: string, algorithm = 'sha512') => {
-    return (
-        crypto
-            .createHmac(algorithm, process.env.PRIVATE_KEY || 'admin')
-            .update(string)
-            .digest('hex')
-    );
+    return crypto
+        .createHmac(algorithm, process.env.PRIVATE_KEY || 'admin')
+        .update(string)
+        .digest('hex');
 };
 // Tạo token
 export const generateJWTToken = (userId: string, algorithm = 'sha512', exp = 7) => {
@@ -55,7 +53,6 @@ export const parserJWTToken = (bearerToken?: string, withBearerPrefix = true) =>
             return { ...responseToken, errors: 'Invalid JWT token format' };
         const payload = JSON.parse(Buffer.from(base64Payload, 'base64').toString());
         if (addDaysToUnixTime(0) > payload.exp) return { ...responseToken, errors: 'Token has expired!' };
-
         return { ...responseToken, success: true, payload };
     } catch (e: any) {
         return { ...responseToken, errors: e.message };

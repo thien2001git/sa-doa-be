@@ -17,12 +17,11 @@ const userSchema = new mongoose.Schema(
         password: {
             type: String,
             required: [true, 'Password is required'],
-            minLength: [5, 'Password must be at least {MINLENGTH} characters'],
-            maxLength: [32, 'Password must be at least {MAXLENGTH} characters'],
+            minLength: [5, 'Passwords must be at least {MINLENGTH} characters'],
         },
         role_level: {
             type: Number,
-            enum: Object.keys(ROLE_LEVEL),
+            enum: [0, 1, 2],
             default: 1,
         },
         status: String,
@@ -43,8 +42,9 @@ const userSchema = new mongoose.Schema(
             required: [true, 'Name is required'],
         },
         phone: {
+            require: false,
             type: String,
-            unique: true,
+            // unique: true,
         },
         address: String,
         avatar: String,
@@ -67,5 +67,6 @@ const userSchema = new mongoose.Schema(
         id: false,
     }
 );
+userSchema.index({ phone: 1 }, { unique: true, partialFilterExpression: { phone: { $ne: null } } });
 
 export default mongoose.model('user', userSchema, 'users');
