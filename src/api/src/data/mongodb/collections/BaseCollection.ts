@@ -1,74 +1,95 @@
-import {MongoClient, WithId} from "mongodb";
-import client from "../../utils/ConnectionUtils";
+import mongoose from 'mongoose';
+import { PAGINATE_OPTIONS } from '../../../config/BuildConfig';
+export type ModelType = mongoose.Model<mongoose.Document | any>;
+class BaseCollection {
+    model: ModelType;
 
-export class BaseCollection<T> {
-    protected collectionName: string
-    private dbName = "sa-doa"
-
-    constructor(collectionName: string) {
-        console.log("client connect")
-        this.collectionName = collectionName
-        client.connect().then((res: MongoClient) => {
-            console.log("client connect ok")
-        }).catch(() => {
-            console.log("client connect not ok")
-        })
+    constructor(model: ModelType) {
+        this.model = model;
     }
 
-    async create(data: T) {
-        const result = await client.db(this.dbName).collection(this.collectionName).insertOne(data);
-        console.log(`New listing created with the following id: ${result.insertedId}`);
+    getModel() {
+        return this.model;
     }
 
-    async createAll(data: Array<T>) {
-        const result = await client.db(this.dbName).collection(this.collectionName).insertMany(data);
-        console.log(`${result.insertedCount} new listing(s) created with the following id(s):`);
-        console.log(result.insertedIds);
+    setModel(model: ModelType) {
+        this.model = model;
     }
-
-    async findOne(filter: T) {
-        const result = await client.db(this.dbName).collection(this.collectionName).findOne(filter);
-        if (result) {
-            console.log(`Found a listing in the collection with the name '${filter}':`);
-            console.log(result);
-        } else {
-            console.log(`No listings found with the name '${filter}'`);
-        }
-        return result
-    }
-
-    async findAll() {
-        console.log("findAll")
-        const cursor = await client.db(this.dbName).collection(this.collectionName).find({})
-        const results = await cursor.toArray();
-
-        if (results.length > 0) {
-            results.forEach((result: WithId<Document>, i: number) => {
-                console.log(`${i + 1}. result: ${JSON.stringify(result)}`);
+    // Tạo mớis
+    store(data: any, user?: any) {
+        if (user) {
+            return this.getModel().create({
+                ...data,
+                created_by: user._id ?? null,
+                updated_by: user._id ?? null,
             });
-        } else {
-            console.log(`No listings found`);
         }
-        return results
+        return this.getModel().create(data);
     }
 
-    async upsert(filter: T, newValue: T) {
-        const result = await client.db(this.dbName).collection(this.collectionName)
-            .updateOne(filter, {$set: newValue}, {upsert: true});
-
-        console.log(`${result.matchedCount} document(s) matched the query criteria.`);
-        console.log(`${result.modifiedCount} document(s) was/were updated.`);
+    // tìm 1 hoặc nhiều
+    findBy(conditions = {}, sort = {}) {
+        return this.getModel()
+            .find({ ...conditions, deleted_at: null })
+            .sort(sort);
     }
-
-    async delete(data: T) {
-        const result = await client.db(this.dbName).collection(this.collectionName)
-            .deleteOne(data);
-        console.log(`${result.deletedCount} document(s) was/were deleted.`);
+    // tìm 1 cái
+    findOne(conditions = {}) {
+        return this.getModel().findOne({ ...conditions, deleted_at: null });
     }
+    // tìm kiếm theo id
+    findById(id: string) {
+        return this.getModel().findOne({
+            _id: id,
+            deleted_at: null,
+        });
+    }
+    // Cập nhật
+    update(id: string, data: any, user?: any) {
+        if (user) {
+            return this.getModel().findByIdAndUpdate(id, {
+                ...data,
+                updated_by: user._id ?? null,
+                updated_at: new Date(),
+            });
+        }
 
-    async deleteAll(data: Array<T>) {
-        data.forEach((value: T) => {
-            this.delete(value)
-        })
+        return this.getModel().findByIdAndUpdate(id, data);
+    }
+    // Đếm theo conditions
+    count(conditions = {}) {
+        return this.getModel().countDocuments({ ...conditions });
+    }
+    // Xoá theo id
+    delete(id: string, user?: string) {
+        return this.getModel().findByIdAndUpdate(id, {
+            deleted_at: new Date(),
+            deleted_by: user,
+            is_deleted: 1,
+        });
+    }
+    // Tìm kiếm tất cả và phân trang
+    async paginate(conditions: any, limit = PAGINATE_OPTIONS.limit, page = PAGINATE_OPTIONS.page) {
+        limit = +limit || PAGINATE_OPTIONS.limit;
+        page = +page || PAGINATE_OPTIONS.page;
+        const con = { ...conditions };
+        if (conditions.is_deleted != 1) con.is_deleted = 0;
+        const [data, total] = await Promise.all([
+            this.getModel()
+                .find(con)
+                .skip(limit * (page - 1))
+                .limit(limit),
+            this.getModel().countDocuments(conditions),
+        ]);
+
+        return {
+            docs: data,
+            total,
+            limit,
+            page,
+            totalPage: Math.ceil(total / limit),
+        };
     }
 }
+
+export default BaseCollection;

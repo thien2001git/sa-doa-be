@@ -1,16 +1,21 @@
-import BuildConfig from "../../config/BuildConfig";
-import {MongoClientOptions} from "mongodb";
+import mongoose from 'mongoose';
 
-const {MongoClient, ServerApiVersion} = require('mongodb');
+const connect = (uri?: string, dbName?: string): Promise<void> => {
+    return new Promise<void>((resolve, reject) => {
+        if (!uri) return reject(new Error('Uri is required'));
+        if (!dbName) return reject(new Error('DB name is required'));
+        mongoose
+            .connect(uri, {
+                autoIndex: true,
+                dbName,
+            })
+            .then(() => {
+                resolve();
+            })
+            .catch((error) => {
+                reject(error);
+            });
+    });
+};
 
-const mongoClientOptions: MongoClientOptions = {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
-    }
-}
-
-const client = new MongoClient(BuildConfig.CONNECTION_STRING, mongoClientOptions);
-
-export default client
+export default connect;

@@ -1,12 +1,16 @@
-import {BaseCollection} from "./BaseCollection";
-import {User} from "../../model/User";
+import userModel from '../../model/User.js';
+import BaseCollection from './BaseCollection.js';
 
-class UserCollection extends BaseCollection<User>{
+class UserCollection extends BaseCollection {
     constructor() {
-        super('user');
+        super(userModel);
+    }
+    findByUsernameOrEmail(usernameOrEmail: string) {
+        return this.getModel().findOne({
+            $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+        });
     }
 }
 
-const userCollection = new UserCollection()
-
-export default userCollection
+const userCollection = new UserCollection();
+export default userCollection;
