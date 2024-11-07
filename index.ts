@@ -3,12 +3,11 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import logger from 'morgan';
-import path from 'path';
 import connect from './src/api/src/data/utils/ConnectionUtils';
 import router from './src/routes';
 
 dotenv.config({
-    path: '.env.local',
+    path: process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env',
 });
 const PORT = process.env.PORT || 8080;
 

@@ -1,8 +1,8 @@
 import express from 'express';
 import { responseErrors, responseSuccess } from '../../../../helpers';
+import { hashHmacString } from '../../../../helpers/crypto';
 import userCollection from '../../data/mongodb/collections/UserCollection';
 import BaseController from './base.controller';
-import { hashHmacString } from '../../../../helpers/crypto';
 
 class UserController extends BaseController {
     async index(req: express.Request, res: express.Response) {
@@ -10,21 +10,21 @@ class UserController extends BaseController {
             const users = await userCollection.paginate({});
             return responseSuccess(res, users);
         } catch (error: any) {
-            return responseErrors(res, 400, error.message);
+            return responseErrors(res, error);
         }
     }
     async create(req: express.Request, res: express.Response) {
         console.log(req.body);
         try {
-            const {body} =req
-            const newPass = hashHmacString(body.password)
+            const { body } = req;
+            const newPass = hashHmacString(body.password);
             const userCreated = await userCollection.store({
                 ...body,
-                password:newPass
+                password: newPass,
             });
             return responseSuccess(res, userCreated);
         } catch (error: any) {
-            return responseErrors(res, 400, error.message);
+            return responseErrors(res, error.message, 400);
         }
     }
     async update(req: express.Request, res: express.Response) {
@@ -33,7 +33,7 @@ class UserController extends BaseController {
             const user = await userCollection.update(req.body.id, req.body);
             return responseSuccess(res, user);
         } catch (error: any) {
-            return responseErrors(res, 400, error.message);
+            return responseErrors(res, error.message, 400);
         }
     }
     async delete(req: express.Request, res: express.Response) {
@@ -42,7 +42,7 @@ class UserController extends BaseController {
             const useDeleted = await userCollection.delete(req.body.id);
             return responseSuccess(res, useDeleted);
         } catch (error: any) {
-            return responseErrors(res, 400, error.message);
+            return responseErrors(res, error.message, 400);
         }
     }
 }

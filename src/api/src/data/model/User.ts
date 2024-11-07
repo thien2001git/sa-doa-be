@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema(
             default: 0,
         },
         // Dùng để đăng nhập
-        user_name: {
+        username: {
             type: String,
             required: [true, 'Username is required'],
             unique: true,

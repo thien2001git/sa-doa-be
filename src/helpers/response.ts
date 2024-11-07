@@ -15,18 +15,30 @@ interface Error {
     errors: any;
     message: string;
 }
-export const responseErrors = (res: express.Response, statusCode = 500, message?: string, errors?: []) => {
+
+export const responseErrors = (res: express.Response, error: any, statusCode = 500, errors: any[] = []) => {
+    console.log(error);
+
     const response: Error = {
         now: new Date(),
         status_code: statusCode,
         errors: null,
         message: 'Server error',
     };
-    if (errors) {
+    if (errors.length > 0) {
         response.errors = errors;
+    } else delete response.errors;
+    if (typeof error === 'string') {
+        response.message = error;
     }
-    if (message) {
-        response.message = message;
+    // Lỗi đã tồn tại của mongoose
+    if (error.code === 11000) {
+        const field = Object.keys(error.keyPattern)[0];
+        response.message = `${field?.toUpperCase()} đã tồn tại`;
+        response.status_code = 409;
+    } else if (error.code && error.message) {
+        response.message = error.message;
+        response.status_code = error.code;
     }
     return res.status(statusCode).json(response);
 };

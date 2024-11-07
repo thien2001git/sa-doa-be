@@ -6,6 +6,6 @@ const router = (app: express.Express) => {
     app.get('/', (_, res) => responseSuccess(res, null, 200, 'Thành công'));
     authRouter(app);
     useRouter(app);
-    app.all('*', (_, res) => responseErrors(res, 404, '404 Not Found'));
+    app.all('*', (_, res) => responseErrors(res, 'API Not Found', 404));
 };
 export default router;

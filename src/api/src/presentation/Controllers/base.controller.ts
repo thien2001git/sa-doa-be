@@ -6,7 +6,7 @@ class BaseController {
         try {
             return responseSuccess(res, null);
         } catch (error: any) {
-            return responseErrors(res, 400, error.message);
+            return responseErrors(res, error.message, 400);
         }
     }
 }
