@@ -1,85 +1,86 @@
 import mongoose from 'mongoose';
 import { PAGINATE_OPTIONS } from '../../../config/BuildConfig';
-export type ModelType = mongoose.Model<mongoose.Document | any>;
-class BaseCollection {
-    model: ModelType;
 
-    constructor(model: ModelType) {
+export type ModelType<T> = mongoose.Model<T>;
+
+class BaseCollection<T> {
+    model: ModelType<T>;
+
+    constructor(model: ModelType<T>) {
         this.model = model;
     }
 
-    getModel() {
+    getModel(): ModelType<T> {
         return this.model;
     }
 
-    setModel(model: ModelType) {
-        this.model = model;
-    }
-    // Tạo mớis
-    store(data: any, user?: any) {
+    // Cập nhật các phương thức trả về với kiểu T
+    store(data: T, user?: any): Promise<T> {
         if (user) {
-            return this.getModel().create({
+            return this.model.create({
                 ...data,
                 created_by: user._id ?? null,
                 updated_by: user._id ?? null,
             });
         }
-        return this.getModel().create(data);
+        return this.model.create(data);
     }
 
-    // tìm 1 hoặc nhiều
-    findBy(conditions = {}, sort = {}) {
-        return this.getModel()
+    findBy(conditions = {}, sort = {}): Promise<T[]> {
+        return this.model
             .find({ ...conditions, deleted_at: null })
-            .sort(sort);
+            .sort(sort)
+            .exec();
     }
-    // tìm 1 cái
-    findOne(conditions = {}) {
-        return this.getModel().findOne({ ...conditions, deleted_at: null });
+
+    findOne(conditions = {}): Promise<T | null> {
+        return this.model.findOne({ ...conditions, deleted_at: null }).exec();
     }
-    // tìm kiếm theo id
-    findById(id: string) {
-        return this.getModel().findOne({
-            _id: id,
-            deleted_at: null,
-        });
+
+    findById(id: string): Promise<T | null> {
+        return this.model.findOne({ _id: id, deleted_at: null }).exec();
     }
-    // Cập nhật
-    update(id: string, data: any, user?: any) {
+
+    update(id: string, data: Partial<T>, user?: any): Promise<T | null> {
         if (user) {
-            return this.getModel().findByIdAndUpdate(id, {
-                ...data,
-                updated_by: user._id ?? null,
-                updated_at: new Date(),
-            });
+            return this.model
+                .findByIdAndUpdate(id, {
+                    ...data,
+                    updated_by: user._id ?? null,
+                    updated_at: new Date(),
+                })
+                .exec();
         }
 
-        return this.getModel().findByIdAndUpdate(id, data);
+        return this.model.findByIdAndUpdate(id, data).exec();
     }
-    // Đếm theo conditions
-    count(conditions = {}) {
-        return this.getModel().countDocuments({ ...conditions });
+
+    count(conditions = {}): Promise<number> {
+        return this.model.countDocuments({ ...conditions }).exec();
     }
-    // Xoá theo id
-    delete(id: string, user?: string) {
-        return this.getModel().findByIdAndUpdate(id, {
-            deleted_at: new Date(),
-            deleted_by: user,
-            is_deleted: 1,
-        });
+
+    delete(id: string, user?: string): Promise<T | null> {
+        return this.model
+            .findByIdAndUpdate(id, {
+                deleted_at: new Date(),
+                deleted_by: user,
+                is_deleted: 1,
+            })
+            .exec();
     }
-    // Tìm kiếm tất cả và phân trang
+
     async paginate(conditions: any, limit = PAGINATE_OPTIONS.limit, page = PAGINATE_OPTIONS.page) {
         limit = +limit || PAGINATE_OPTIONS.limit;
         page = +page || PAGINATE_OPTIONS.page;
         const con = { ...conditions };
         if (conditions.is_deleted != 1) con.is_deleted = 0;
         const [data, total] = await Promise.all([
-            this.getModel()
+            this.model
                 .find(con)
                 .skip(limit * (page - 1))
-                .limit(limit),
-            this.getModel().countDocuments(conditions),
+                .limit(limit)
+                .exec(),
+            this.model.countDocuments(conditions).exec(),
         ]);
 
         return {

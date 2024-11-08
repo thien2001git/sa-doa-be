@@ -1,13 +1,51 @@
-import mongoose from 'mongoose';
+import mongoose, { InferSchemaType, Schema } from 'mongoose';
 
-const modelSchema = new mongoose.Schema(
+// const ROLE_LEVEL = {
+//     0: 'Super Admin',
+//     1: 'User',
+//     2: 'Collaborator',
+// };
+
+const userSchema = new Schema(
     {
-        name: {
+        email: {
+            type: String,
+            unique: true,
+            required: [true, 'Email is required'],
+            lowercase: true,
+            trim: true,
+        },
+        password: {
+            type: String,
+            required: [true, 'Password is required'],
+            minLength: [5, 'Passwords must be at least {MINLENGTH} characters'],
+        },
+        role_level: {
+            type: Number,
+            enum: [0, 1, 2],
+            default: 1,
+        },
+        status: String,
+        is_deleted: {
+            type: Number,
+            enum: [0, 1],
+            default: 0,
+        },
+        username: {
             type: String,
             required: [true, 'Username is required'],
             unique: true,
         },
-        //
+        display_name: {
+            type: String,
+            required: [true, 'Name is required'],
+        },
+        phone: {
+            require: false,
+            type: String,
+        },
+        address: String,
+        avatar: String,
         created_by: String,
         updated_by: String,
         deleted_by: String,
@@ -24,4 +62,10 @@ const modelSchema = new mongoose.Schema(
     }
 );
 
-export default mongoose.model('model', modelSchema, 'models');
+userSchema.index({ phone: 1 }, { unique: true, partialFilterExpression: { phone: { $ne: null } } });
+
+type UserType = InferSchemaType<typeof userSchema>;
+type OptionalUserType = Partial<UserType>;
+
+export { OptionalUserType, UserType };
+export default mongoose.model<UserType>('user', userSchema, 'users');
