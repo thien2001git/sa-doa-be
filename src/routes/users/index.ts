@@ -7,6 +7,7 @@ const userRouter = (app: express.Express) => {
     // domain/user/1
     router.use(authMiddleware);
     router.get('/', UserController.index);
+    router.get('/check-token', UserController.checkToken);
     router.post('/create', UserController.create);
     router.put('/update', UserController.update);
     router.delete('/delete', UserController.delete);

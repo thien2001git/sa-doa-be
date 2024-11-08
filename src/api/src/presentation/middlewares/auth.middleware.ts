@@ -8,9 +8,11 @@ export const authMiddleware = async (req: express.Request, res: express.Response
     if (!responseToken.success) return responseUnauthorized(res, 'Token Error');
     try {
         const userId = responseToken.payload.id;
-        const userDB = userCollection.findById(userId);
+        const userDB = await userCollection.findById(userId);
         if (!userDB) return responseUnauthorized(res, 'User not found');
         res.locals.authUser = userDB;
+        console.log(userDB);
+
         next();
     } catch (e: any) {
         return responseErrors(res, e);
