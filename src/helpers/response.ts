@@ -17,8 +17,6 @@ interface Error {
 }
 
 export const responseErrors = (res: express.Response, error: any, statusCode = 500, errors: any[] = []) => {
-    console.log(error);
-
     const response: Error = {
         now: new Date(),
         status_code: statusCode,
@@ -40,7 +38,8 @@ export const responseErrors = (res: express.Response, error: any, statusCode = 5
         response.message = error.message;
         response.status_code = error.code;
     }
-    return res.status(statusCode).json(response);
+    if (response.status_code === 500) console.log(error);
+    return res.status(response.status_code).json(response);
 };
 export const responseUnauthorized = (res: express.Response, message?: string) => {
     const response: Error = {
