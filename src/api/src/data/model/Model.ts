@@ -1,10 +1,10 @@
 import mongoose, { InferSchemaType, Schema } from 'mongoose';
 
-const ROLE_LEVEL = {
-    0: 'Super Admin',
-    1: 'User',
-    2: 'Collaborator',
-};
+// const ROLE_LEVEL = {
+//     0: 'Super Admin',
+//     1: 'User',
+//     2: 'Collaborator',
+// };
 
 const userSchema = new Schema(
     {
@@ -64,8 +64,8 @@ const userSchema = new Schema(
 
 userSchema.index({ phone: 1 }, { unique: true, partialFilterExpression: { phone: { $ne: null } } });
 
-// Infer TypeScript type from Mongoose schema
 type UserType = InferSchemaType<typeof userSchema>;
+type OptionalUserType = Partial<UserType>;
 
-export { UserType };
+export { OptionalUserType, UserType };
 export default mongoose.model<UserType>('user', userSchema, 'users');
