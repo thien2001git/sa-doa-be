@@ -6,9 +6,7 @@ import logger from 'morgan';
 import connect from './src/api/src/data/utils/ConnectionUtils';
 import router from './src/routes';
 
-dotenv.config({
-    path: process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env',
-});
+dotenv.config();
 const PORT = process.env.PORT || 8080;
 
 // connect to database

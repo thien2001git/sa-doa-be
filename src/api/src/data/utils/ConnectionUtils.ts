@@ -8,6 +8,7 @@ const connect = (uri?: string, dbName?: string): Promise<void> => {
             .connect(uri, {
                 autoIndex: true,
                 dbName,
+                connectTimeoutMS: 20000,
             })
             .then(() => {
                 resolve();

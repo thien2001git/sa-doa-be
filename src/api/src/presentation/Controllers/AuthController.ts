@@ -29,6 +29,7 @@ class AuthController extends BaseController {
             if (!userDb) return responseErrors(res, 'User not found', 400);
             if (hashHmacString(password) !== userDb.password) return responseUnauthorized(res, 'Password is incorrect');
             return responseSuccess(res, {
+                user: userDb,
                 token: generateJWTToken(userDb._id),
                 // user: userDb, api riêng
             });
