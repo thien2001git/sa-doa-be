@@ -6,7 +6,21 @@ const ROLE_LEVEL = {
     2: 'Collaborator',
 };
 
-const userSchema = new Schema(
+interface IUser {
+    address: string;
+    role_level: number;
+    deleted_by?: string;
+    avatar?: string;
+    display_name: string;
+    created_by?: string;
+    deleted_at?: Date;
+    password: string;
+    is_deleted: number;
+    updated_at?: Date;
+    phone: string;
+}
+
+const userSchema = new Schema<IUser>(
     {
         email: {
             type: String,
