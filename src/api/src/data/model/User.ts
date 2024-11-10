@@ -23,6 +23,7 @@ interface IUser {
     status?: string;
     username: string;
     updated_by: string;
+    bio?: string;
 }
 
 const userSchema = new Schema<IUser>(

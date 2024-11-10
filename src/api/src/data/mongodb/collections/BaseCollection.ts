@@ -74,14 +74,13 @@ class BaseCollection<T> {
         page = +page || PAGINATE_OPTIONS.page;
         const con = { ...conditions };
         if (conditions.is_deleted != 1) con.is_deleted = 0;
-        const [data, total] = await Promise.all([
-            this.model
-                .find(con)
-                .skip(limit * (page - 1))
-                .limit(limit)
-                .exec(),
-            this.model.countDocuments(conditions).exec(),
-        ]);
+        console.log(limit, page, limit * (page - 1))
+        const data = this.model
+            .find(con)
+            .skip(limit * (page - 1))
+            .limit(limit)
+            .exec()
+        const total = await this.model.countDocuments(conditions).exec()
 
         return {
             docs: data,
