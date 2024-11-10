@@ -71,6 +71,7 @@ const userSchema = new Schema<IUser>(
         deleted_by: String,
         updated_at: Date,
         deleted_at: Date,
+        bio: String,
     },
     {
         timestamps: {
