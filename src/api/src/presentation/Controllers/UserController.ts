@@ -66,7 +66,7 @@ class UserController extends BaseController {
     async update(req: express.Request, res: express.Response) {
         try {
             console.log(req.body);
-            const user = await userCollection.update(req.body.id, req.body);
+            const user = await userCollection.update(req.body._id, req.body);
             return responseSuccess(res, user);
         } catch (error: any) {
             return responseErrors(res, error.message, 400);
