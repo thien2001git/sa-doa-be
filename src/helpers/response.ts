@@ -1,4 +1,7 @@
 import express from 'express';
+import {User} from "../api/src/data/model/User";
+import {MyPage} from "../api/src/data/model/response/MyPage";
+import {MyResponse} from "../api/src/data/model/response/MyResponse";
 
 export const responseSuccess = (res: express.Response, data: any, statusCode = 200, message = '') => {
     return res.status(statusCode).json({
@@ -7,6 +10,12 @@ export const responseSuccess = (res: express.Response, data: any, statusCode = 2
         data: data,
         message: message,
     });
+};
+
+export const responseUsers = (data: MyPage<User[]>, statusCode = 200, message = ''): MyResponse<MyPage<User[]>> => {
+    return {
+        data: data, message: message, now: new Date(), status_code: statusCode
+    };
 };
 
 interface Error {
