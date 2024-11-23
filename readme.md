@@ -1,16 +1,22 @@
 ## Làm sao để chạy
 
+**Get submodules**<br>
+
+```bash
+git submodule update --init --recursive
+```
+
 **Cài đặt module**<br>
 Cài đặt các module cần thiết
 
-```command
+```bash
 npm i
 ```
 
 **Run dev**<br>
 chạy ở chế độ dev tự động reload kho có thay đổi file
 
-```command
+```bash
 npm run dev
 ```
 
@@ -18,12 +24,12 @@ npm run dev
 
 -   Build
 
-```command
+```bash
 npm run build
 ```
 
 -   Start (Yêu cầu có bản build trước)
 
-```command
+```bash
 npm start
 ```
