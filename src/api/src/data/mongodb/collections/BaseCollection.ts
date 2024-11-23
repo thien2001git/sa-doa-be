@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { PAGINATE_OPTIONS } from '../../../config/BuildConfig';
+import {MyPage} from "../../model/response/MyPage";
 
 export type ModelType<T> = mongoose.Model<T>;
 
@@ -69,13 +70,13 @@ class BaseCollection<T> {
             .exec();
     }
 
-    async paginate(conditions: any, limit = PAGINATE_OPTIONS.limit, page = PAGINATE_OPTIONS.page) {
+    async paginate(conditions: any, limit = PAGINATE_OPTIONS.limit, page = PAGINATE_OPTIONS.page):Promise<MyPage<T[]>> {
         limit = +limit || PAGINATE_OPTIONS.limit;
         page = +page || PAGINATE_OPTIONS.page;
         const con = { ...conditions };
         if (conditions.is_deleted != 1) con.is_deleted = 0;
         console.log(limit, page, limit * (page - 1))
-        const data = this.model
+        const data = await this.model
             .find(con)
             .skip(limit * (page - 1))
             .limit(limit)

@@ -1,5 +1,5 @@
 import express from 'express';
-import { responseErrors, responseSuccess } from '../../../../helpers';
+import {responseErrors, responseSuccess, responseUsers} from '../../../../helpers';
 import { hashHmacString } from '../../../../helpers/crypto';
 import userCollection from '../../data/mongodb/collections/UserCollection';
 import BaseController from './base.controller';
@@ -44,7 +44,7 @@ class UserController extends BaseController {
     async index(req: express.Request, res: express.Response) {
         try {
             const users = await userCollection.paginate({});
-            return responseSuccess(res, users);
+            return res.send(responseUsers(users))
         } catch (error: any) {
             return responseErrors(res, error);
         }
