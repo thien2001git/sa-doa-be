@@ -1,0 +1,3 @@
+[submodule "sa-doa-module"]
+	path = src/api/src/data/model
+	url = https://github.com/thien2001git/sa-doa-module.git
