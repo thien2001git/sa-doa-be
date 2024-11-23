@@ -1,5 +1,5 @@
-import userModel, { UserType } from '../../model/User.js';
 import BaseCollection from './BaseCollection.js';
+import {userModel, UserType} from "../../schema/UserSchema";
 
 class UserCollection extends BaseCollection<UserType> {
     constructor() {
